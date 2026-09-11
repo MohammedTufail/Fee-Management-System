@@ -1,0 +1,18 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+
+    "SQL_CONNECTION_STRING": "Driver={ODBC Driver 18 for SQL Server};Server=tcp:<server>.database.windows.net,1433;Database=<db>;Uid=<user>;Pwd=<pwd>;Encrypt=yes;",
+    "USE_MANAGED_IDENTITY": "false",
+
+    "AAD_TENANT_ID": "<your-tenant-id>",
+    "AAD_API_AUDIENCE": "<api-app-registration-client-id>",
+    "SENDGRID_API_KEY": "",
+    "SENDGRID_FROM_EMAIL": "example@gmail.com",
+
+    "REMINDER_CRON_SCHEDULE": "0 0 23 31 12 *",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": ""
+  }
+}

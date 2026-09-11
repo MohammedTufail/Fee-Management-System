@@ -3,9 +3,6 @@ ListStudents Azure Function (admin query endpoint)
 
     GET /api/fee/students?course=&status=&page=&pageSize=
 
-Admin-only (`@require_role("Admin")`). Lets an administrator search/browse
-fee details across all students rather than looking one up at a time.
-
 Query params (all optional):
     course    - exact match on Students.Course
     status    - "Paid" | "Partially Paid" | "Overdue" (computed, same rule
@@ -16,12 +13,6 @@ Query params (all optional):
 Response body:
     { "page": 1, "pageSize": 50, "total": 137, "students": [ {...}, ... ] }
 
-Note on scale: filtering by `course` is pushed into SQL. Filtering by the
-computed `status` currently happens in Python after the course filter runs,
-which is fine at the 5,000-row scale this assignment targets (a single
-in-memory pass over at most a few thousand rows). If this ever needs to
-scale well past that, move the status logic into a SQL CASE expression in
-the WHERE clause instead — see the comment in shared/fee_logic.py.
 """
 import json
 import logging
@@ -110,3 +101,6 @@ def ListStudents(req: func.HttpRequest) -> func.HttpResponse:
         )
     finally:
         conn.close()
+
+
+

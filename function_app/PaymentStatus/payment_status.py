@@ -1,32 +1,4 @@
-"""
-PaymentStatus Azure Function (Task 3)
 
-    GET /api/fee/status/{studentId}
-
-Access:
-    - Admin   : may view any student's fee status.
-    - Student : may only view their OWN record — enforced by comparing
-                Students.AzureADObjectId for the requested StudentID against
-                the caller's `oid` claim from their AAD token. A student
-                requesting someone else's StudentID gets 403, not their own
-                data with a warning.
-
-Response body:
-    {
-      "studentId": 1,
-      "name": "...",
-      "course": "...",
-      "totalFee": 50000.0,
-      "paidAmount": 20000.0,
-      "balance": 30000.0,
-      "dueDate": "2026-08-15",
-      "status": "Paid" | "Partially Paid" | "Overdue"
-    }
-
-Status computation lives in shared/fee_logic.py (compute_status /
-balance_due) so this endpoint and ListStudents can never disagree about
-what counts as Paid/Partially Paid/Overdue.
-"""
 import json
 import logging
 import os
@@ -114,4 +86,7 @@ def PaymentStatus(req: func.HttpRequest) -> func.HttpResponse:
         )
     finally:
         conn.close()
+
+
+
  

@@ -2,28 +2,7 @@
   apim-policy.xml — apply at the API (or Product) scope in Azure API
   Management, in front of the Function App from Part 2.
 
-  Covers the assignment's "Secure API + rate limiting" requirement:
-    1. validate-jwt     — rejects requests without a valid Azure AD token
-                           (belt-and-braces alongside @require_role in code;
-                           this stops invalid tokens at the gateway before
-                           they even reach the Function).
-    2. rate-limit-by-key — per-subscription-key rate limit.
-    3. quota-by-key      — daily call quota per subscription key.
-    4. Subscription key requirement itself ("Ocp-Apim-Subscription-Key")
-       is NOT a policy — it's enabled on the Product via "Requires
-       subscription" = Yes in the Azure Portal / ARM, which is what
-       actually enforces the API-key requirement.
 
-  Replace {tenant-id} and {api-app-client-id} with your Azure AD tenant ID
-  and the client (application) ID / Application ID URI of the App
-  Registration that represents this API.
-
-  NOTE: like shared/auth.py, this only lists the v2.0 issuer. If your
-  tokens are v1.0 (iss = https://sts.windows.net/{tenant-id}/, which is
-  what az cli's "resource" based token request hands back), add a second
-  issuer line for that format, or switch the openid config to the v1.0
-  metadata document instead. See the note at the top of shared/auth.py
-  for the full v1-vs-v2 explanation.
 -->
 <policies>
   <inbound>

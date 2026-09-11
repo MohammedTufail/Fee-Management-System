@@ -1,50 +1,5 @@
 """
 FeeReminderTimer Azure Function (Task 2 — Automation)
-
-Timer-triggered, NCRONTAB schedule (default: daily at 08:00 UTC — override
-with the REMINDER_CRON_SCHEDULE app setting rather than editing code).
-
-On each run:
-  1. Query every student who is Overdue — PaidAmount < TotalFee AND
-     DueDate < today (same definition as shared/fee_logic.compute_status,
-     re-expressed directly in SQL here since we're already scanning the
-     whole table).
-  2. For each, check ReminderLog for an existing Status='Sent' row for that
-     StudentID sent TODAY. If found, skip — this is what makes re-runs /
-     retries idempotent within a day (per the assignment's requirement
-     that the job "won't double-send"), while still allowing a fresh
-     reminder on each subsequent day the student remains overdue, which is
-     what "automate reminders for pending dues" actually implies.
-  3. Otherwise, send one reminder via SendGrid (shared/email.py) and log
-     the outcome — Status='Sent' or Status='Failed' — to ReminderLog.
-     A Failed row does NOT block a retry later the same day; only a Sent
-     row does. This means a transient SendGrid outage self-heals on the
-     next attempt instead of silently giving up forever.
-
-Each student's send + log is committed individually (not batched into one
-transaction for the whole run). With thousands of overdue students and a
-real network call to SendGrid per student, a single end-of-run commit would
-mean (a) nothing is visible in ReminderLog until the entire run finishes —
-which can take minutes — and (b) a crash partway through loses every
-row processed so far, including ones that were genuinely sent. Committing
-per-student means a crash at student #1,200 leaves the first 1,199
-correctly logged, and — combined with the "already sent today" check above
-— the next run picks up exactly where this one left off instead of
-resending to everyone.
-
-ACTUAL SCHEMA (sql/schema_and_seed.sql):
-  - Students.Email already exists — no patch needed.
-  - ReminderLog columns: ReminderID, StudentID, SentAt, Status. There is
-    no DueDate or Note column, so the idempotency check and the log write
-    below are keyed on (StudentID, "sent today") rather than
-    (StudentID, DueDate) — Students only ever has one DueDate on file per
-    student at a time anyway, so this is equivalent in practice. Any
-    send-failure detail goes to the Function's own logs (Application
-    Insights), not to the DB.
-
-Requires AzureWebJobsStorage pointed at a real storage account or Azurite —
-Timer triggers use it to persist their schedule state. HTTP-only Part 2
-could get away without this; Part 3 cannot.
 """
 import logging
 import os

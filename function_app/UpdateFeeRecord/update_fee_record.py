@@ -4,12 +4,6 @@ UpdateFeeRecord Azure Function (Task 4)
     POST/PATCH /api/fee/update/{studentId}
     Body: { "paidAmount": 25000.0, "note": "optional free-text reason" }
 
-Admin-only (`@require_role("Admin")`). Writes the new PaidAmount to
-Students AND inserts a row into FeeTransactions in the SAME transaction —
-so the update is never applied without a matching audit entry, and never
-audited without the update actually landing. On any failure the whole
-transaction is rolled back.
-
 FeeTransactions columns (see sql/schema_and_seed.sql):
     StudentID, ChangedBy, PreviousPaid, NewPaid, Note, CreatedAt (default)
 

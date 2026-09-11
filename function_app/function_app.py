@@ -8,14 +8,6 @@ Wires together every blueprint across all 3 parts of this assignment:
     UpdateFeeRecord/    -> Task 4: admin-only secure update + audit trail
     FeeReminderTimer/   -> Task 2: daily overdue-fee email reminders (Part 3)
 
-Only the FeeReminderTimer import/registration is new in Part 3 — the three
-HTTP blueprints above are unchanged from Part 2.
-
-http_auth_level is ANONYMOUS at the Functions-host level because
-authentication/authorization is handled explicitly in code via
-`shared.auth.require_role(...)`, which validates the Azure AD JWT itself.
-In production this sits behind APIM (see ../apim/apim-policy.xml), which
-adds the subscription-key requirement and rate limiting in front of it.
 """
 import azure.functions as func
 
